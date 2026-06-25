@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#020817">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Cloud Compare">
+<meta name="description" content="قارن مزودي الهاتف السحابي واختر الأنسب لك">
+<title>Cloud Phone Compare</title>
+<script>
+const manifestData={name:"Cloud Phone Compare",short_name:"Cloud Compare",description:"قارن مزودي الهاتف السحابي",start_url:".",display:"standalone",background_color:"#020817",theme_color:"#020817",orientation:"portrait",lang:"ar",icons:[{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='32' fill='%23020817'/%3E%3Ctext y='130' x='96' font-size='120' text-anchor='middle'%3E%E2%98%81%EF%B8%8F%3C/text%3E%3C/svg%3E",sizes:"192x192",type:"image/svg+xml"},{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%23020817'/%3E%3Ctext y='350' x='256' font-size='320' text-anchor='middle'%3E%E2%98%81%EF%B8%8F%3C/text%3E%3C/svg%3E",sizes:"512x512",type:"image/svg+xml"}]};
+const mb=new Blob([JSON.stringify(manifestData)],{type:'application/json'});
+document.write('<link rel="manifest" href="'+URL.createObjectURL(mb)+'">');
+</script>
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='30' fill='%23020817'/%3E%3Ctext y='120' x='90' font-size='100' text-anchor='middle'%3E%E2%98%81%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#020817;color:#f1f5f9;font-family:'Segoe UI',Tahoma,Arial,sans-serif;overflow-x:hidden}
+#install-banner{display:none;position:fixed;top:0;left:0;right:0;z-index:9999;background:linear-gradient(135deg,#1e3a8a,#1e293b);border-bottom:1px solid #3b82f6;padding:12px 16px;align-items:center;gap:10px;animation:slideDown .3s ease}
+@keyframes slideDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}
+#install-banner.show{display:flex}
+#install-btn{background:#3b82f6;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+#dismiss-btn{background:none;border:none;color:#64748b;cursor:pointer;font-size:22px;margin-right:auto;padding:0 4px}
+#app{max-width:700px;margin:0 auto;padding:16px;padding-bottom:84px}
+.app-header{text-align:center;padding:18px 0 22px}
+.app-header .logo{font-size:42px}
+.app-header h1{font-size:22px;font-weight:900;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-top:6px}
+.app-header p{color:#64748b;font-size:12px;margin-top:4px}
+.search-box{width:100%;padding:11px 14px;background:#0f172a;border:1px solid #1e293b;border-radius:12px;color:#f1f5f9;font-size:14px;outline:none;transition:border .2s;margin-bottom:12px}
+.search-box:focus{border-color:#3b82f6}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.chip{padding:6px 12px;border-radius:20px;border:1px solid #1e293b;background:#0f172a;color:#64748b;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;user-select:none}
+.chip.on{background:#1d4ed8;border-color:#3b82f6;color:#fff}
+.sort-bar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.sort-lbl{font-size:11px;color:#475569}
+.sort-btn{padding:5px 12px;border-radius:8px;border:1px solid #1e293b;background:#0f172a;color:#64748b;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s}
+.sort-btn.on{background:#1e3a8a;border-color:#3b82f6;color:#93c5fd}
+.card{background:#0f172a;border:2px solid #1e293b;border-radius:16px;padding:18px;margin-bottom:12px;cursor:pointer;position:relative;overflow:hidden;transition:transform .12s}
+.card:active{transform:scale(.98)}
+.strip{position:absolute;top:0;right:0;width:4px;height:100%;border-radius:0 14px 14px 0}
+.rank-badge{position:absolute;top:12px;left:12px;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#000}
+.fav-btn{position:absolute;background:none;border:none;font-size:18px;cursor:pointer;padding:4px;line-height:1}
+.card-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;padding-right:4px}
+.card-emoji{font-size:32px;line-height:1;flex-shrink:0}
+.card-name{font-weight:700;font-size:16px;color:#f1f5f9}
+.card-tagline{font-size:12px;color:#94a3b8;margin-top:2px}
+.price-val{font-weight:800;font-size:20px}
+.price-lbl{font-size:10px;color:#64748b}
+.score-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.s-lbl{font-size:11px;color:#64748b;min-width:60px}
+.bar-bg{flex:1;background:#1e293b;border-radius:4px;height:6px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;transition:width .5s}
+.s-val{font-size:13px;font-weight:700;min-width:28px;text-align:right}
+.specs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.spec{font-size:11px;color:#94a3b8;background:#1e293b;padding:3px 8px;border-radius:8px}
+.badges{display:flex;gap:6px;flex-wrap:wrap}
+.bdg{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+.back-btn{background:none;border:none;color:#64748b;cursor:pointer;font-size:14px;padding:0;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.det-header{border-radius:18px;padding:22px;margin-bottom:14px}
+.det-top{display:flex;align-items:center;gap:12px}
+.det-emoji{font-size:50px}
+.det-name{font-size:22px;font-weight:900;color:#f1f5f9}
+.det-tag{font-size:13px;color:#94a3b8;margin-top:3px}
+.det-bf{font-size:12px;margin-top:5px}
+.score-big .num{font-size:36px;font-weight:900}
+.score-big .den{font-size:11px;color:#64748b}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px}
+.stat-box{background:rgba(0,0,0,.35);padding:10px 6px;border-radius:10px;text-align:center}
+.stat-box .sv{font-size:17px;font-weight:800}
+.stat-box .sl{font-size:10px;color:#64748b;margin-top:2px}
+.sec{background:#0f172a;border:1px solid #1e293b;border-radius:14px;padding:16px;margin-bottom:12px}
+.sec-title{font-size:14px;font-weight:700;color:#f1f5f9;margin-bottom:12px}
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.feat-item{display:flex;align-items:center;gap:8px;font-size:13px}
+.srv-tags{display:flex;gap:8px;flex-wrap:wrap}
+.srv-tag{background:#1e293b;padding:4px 12px;border-radius:10px;font-size:12px;color:#94a3b8}
+.pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.pros-box{background:#0f172a;border:1px solid #166534;border-radius:14px;padding:14px}
+.cons-box{background:#0f172a;border:1px solid #7f1d1d;border-radius:14px;padding:14px}
+.pt{font-size:12px;font-weight:700;color:#4ade80;margin-bottom:8px}
+.ct{font-size:12px;font-weight:700;color:#f87171;margin-bottom:8px}
+.pi{font-size:11px;color:#86efac;margin-bottom:5px}
+.ci{font-size:11px;color:#fca5a5;margin-bottom:5px}
+.visit-btn{display:block;text-align:center;padding:14px;border-radius:12px;font-weight:700;font-size:15px;text-decoration:none;color:#fff;margin-top:4px}
+.cmp-sel{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.cmp-lbl{font-size:11px;color:#64748b;display:block;margin-bottom:5px}
+.cmp-select{width:100%;padding:10px;background:#0f172a;border:1px solid #334155;border-radius:10px;color:#f1f5f9;font-size:13px;font-weight:700;cursor:pointer;outline:none;appearance:none}
+.cmp-table{background:#0f172a;border:1px solid #1e293b;border-radius:14px;overflow:hidden;margin-bottom:14px}
+.cmp-head{display:grid;grid-template-columns:1fr 1.1fr 1fr;background:#0a0f1e}
+.cmp-hl,.cmp-hr{padding:12px 8px;text-align:center;font-size:12px;font-weight:700;border-bottom:3px solid}
+.cmp-hm{padding:12px 8px;text-align:center;font-size:11px;color:#475569;border-bottom:3px solid #1e293b}
+.cmp-row{display:grid;grid-template-columns:1fr 1.1fr 1fr;border-bottom:1px solid #1e293b}
+.cmp-row:last-child{border-bottom:none}
+.cmp-cell{padding:10px 6px;text-align:center;font-size:12px;color:#94a3b8}
+.cmp-cell.w{font-weight:800}
+.cmp-cell.m{color:#475569;font-size:11px}
+.verdict{border-radius:14px;padding:20px;text-align:center}
+.v-emoji{font-size:34px;margin-bottom:8px}
+.v-name{font-weight:800;font-size:17px}
+.v-sub{font-size:12px;color:#94a3b8;margin-top:5px}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#0a0f1e;border-top:1px solid #1e293b;display:flex;z-index:100}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 0;cursor:pointer;border:none;background:none;color:#475569;font-size:10px;gap:3px;transition:color .15s}
+.nav-btn.on{color:#60a5fa}
+.nav-btn .ico{font-size:20px}
+.empty{text-align:center;color:#475569;padding:48px 20px;font-size:14px}
+.fade{animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@supports (padding-bottom:env(safe-area-inset-bottom)){
+  .bottom-nav{padding-bottom:env(safe-area-inset-bottom)}
+  #app{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+}
+</style>
+</head>
+<body>
+<div id="install-banner">
+  <div style="font-size:22px">📲</div>
+  <div style="flex:1"><div style="font-size:13px;font-weight:700;color:#f1f5f9">ثبّت التطبيق على هاتفك</div><div style="font-size:11px;color:#64748b">يعمل بدون إنترنت</div></div>
+  <button id="install-btn">تثبيت</button>
+  <button id="dismiss-btn">×</button>
+</div>
+<div id="app"></div>
+<nav class="bottom-nav">
+  <button class="nav-btn on" id="nb-list" onclick="goList()"><span class="ico">📋</span><span>القائمة</span></button>
+  <button class="nav-btn" id="nb-cmp" onclick="goCompare()"><span class="ico">⚖️</span><span>مقارنة</span></button>
+  <button class="nav-btn" id="nb-fav" onclick="goFav()"><span class="ico">⭐</span><span>المفضلة</span></button>
+</nav>
+<script>
+const P=[
+  {id:"redfinger",name:"Redfinger",tag:"الأشهر في الهواتف السحابية",e:"🔴",c:"#E53935",price:9.99,and:"9.0",ram:3,stor:64,eu:true,ip:true,h24:true,ps:true,apk:true,pf:82,st:85,su:70,pr:75,locs:["🇺🇸 أمريكا","🇬🇧 بريطانيا","🇩🇪 ألمانيا","🇸🇬 سنغافورة"],pros:["IP أوروبي ثابت","Play Store كامل","تطبيق Android مخصص","يعمل 24/7"],cons:["سعر مرتفع نسبياً","دعم فني بطيء أحياناً"],url:"https://www.redfinger.net",bf:"مستخدمو IPTV والتطبيقات التجارية"},
+  {id:"ldcloud",name:"LDCloud",tag:"الأسرع للألعاب والـ IPTV",e:"⚡",c:"#1565C0",price:7.49,and:"9.0",ram:4,stor:128,eu:true,ip:true,h24:true,ps:true,apk:true,pf:90,st:80,su:72,pr:68,locs:["🇺🇸 أمريكا","🇯🇵 اليابان","🇩🇪 ألمانيا","🇫🇷 فرنسا"],pros:["أداء عالي جداً","تقنية LDPlayer الموثوقة","RAM أكبر","سعر منافس"],cons:["واجهة أقل بساطة","يحتاج إعداداً أكثر"],url:"https://www.ldcloud.com",bf:"الألعاب وتطبيقات IPTV المتقدمة"},
+  {id:"onecloud",name:"OneCloud Phone",tag:"عزل تام للمطورين",e:"🌐",c:"#2E7D32",price:12.99,and:"10.0",ram:6,stor:256,eu:true,ip:true,h24:true,ps:true,apk:true,pf:78,st:88,su:85,pr:95,locs:["🇩🇪 ألمانيا","🇳🇱 هولندا","🇨🇭 سويسرا"],pros:["خصوصية عالية جداً","Android 10","RAM 6GB","دعم فني ممتاز","سيرفرات أوروبية فقط"],cons:["الأغلى سعراً","واجهة تقنية أكثر تعقيداً"],url:"https://www.onecloudphone.com",bf:"المطورون والمحترفون الباحثون عن الخصوصية"},
+  {id:"noxcloud",name:"Nox Cloud",tag:"للمبتدئين والاستخدام العام",e:"🎮",c:"#6A1B9A",price:5.99,and:"7.0",ram:2,stor:32,eu:false,ip:false,h24:true,ps:true,apk:true,pf:65,st:70,su:78,pr:60,locs:["🇺🇸 أمريكا","🇨🇳 آسيا"],pros:["الأرخص سعراً","سهل الاستخدام","دعم جيد للمبتدئين"],cons:["لا يوجد سيرفر أوروبي","IP غير ثابت","Android قديم","موارد محدودة"],url:"https://www.bignox.com",bf:"المبتدئون والاستخدام الخفيف"},
+  {id:"mumu",name:"MuMu Cloud",tag:"محاكي متطور في السحابة",e:"🔷",c:"#00838F",price:8.99,and:"9.0",ram:4,stor:64,eu:false,ip:true,h24:true,ps:true,apk:true,pf:85,st:82,su:65,pr:65,locs:["🇺🇸 أمريكا","🇯🇵 اليابان","🇭🇰 هونغ كونغ"],pros:["أداء ممتاز للألعاب","سرعة عالية جداً","IP ثابت"],cons:["لا يوجد سيرفر أوروبي","دعم فني متوسط"],url:"https://www.mumuglobal.com",bf:"الألعاب المتطورة وتطبيقات الأداء العالي"}
+];
+function sc(p){return Math.round((p.pf+p.st+p.su+p.pr)/4)}
+let view='list',sel=null,sort='score',feu=false,fip=false,sq='',favs=JSON.parse(localStorage.getItem('fav')||'[]'),cmpL=P[0],cmpR=P[1];
+function isFav(id){return favs.includes(id)}
+function togFav(id,e){e&&e.stopPropagation();isFav(id)?favs=favs.filter(f=>f!==id):favs.push(id);localStorage.setItem('fav',JSON.stringify(favs));render()}
+function getList(){
+  let l=[...P];
+  if(feu)l=l.filter(p=>p.eu);
+  if(fip)l=l.filter(p=>p.ip);
+  if(sq)l=l.filter(p=>p.name.toLowerCase().includes(sq.toLowerCase())||p.tag.includes(sq));
+  if(sort==='score')l.sort((a,b)=>sc(b)-sc(a));
+  else if(sort==='pa')l.sort((a,b)=>a.price-b.price);
+  else if(sort==='pd')l.sort((a,b)=>b.price-a.price);
+  else if(sort==='ram')l.sort((a,b)=>b.ram-a.ram);
+  else if(sort==='pf')l.sort((a,b)=>b.pf-a.pf);
+  return l;
+}
+function bdg(t,v,c){return`<span class="bdg" style="background:${v?c+'22':'#1e293b'};color:${v?c:'#64748b'};border:1px solid ${v?c+'44':'#334155'}">${v?'✅':'❌'} ${t}</span>`}
+function render(){
+  const app=document.getElementById('app');
+  app.className='fade';
+  ['nb-list','nb-cmp','nb-fav'].forEach(id=>document.getElementById(id).classList.remove('on'));
+  if(view==='list'||view==='fav')document.getElementById('nb-list').classList.add('on');
+  else if(view==='compare')document.getElementById('nb-cmp').classList.add('on');
+  if(view==='list'||view==='fav')renderList();
+  else if(view==='detail')renderDetail();
+  else if(view==='compare')renderCompare();
+}
+function renderList(){
+  const isFavV=view==='fav';
+  let list=isFavV?P.filter(p=>isFav(p.id)):getList();
+  let h=`<div class="app-header"><div class="logo">☁️📱</div><h1>Cloud Phone Compare</h1><p>قارن مزودي الهاتف السحابي واختر الأنسب لك</p></div>`;
+  if(!isFavV){
+    h+=`<input class="search-box" type="search" placeholder="🔍 ابحث عن مزود..." value="${sq}" oninput="sq=this.value;render()">`;
+    h+=`<div class="chips"><div class="chip ${feu?'on':''}" onclick="feu=!feu;render()">🇪🇺 أوروبا فقط</div><div class="chip ${fip?'on':''}" onclick="fip=!fip;render()">🔒 IP ثابت فقط</div></div>`;
+    h+=`<div class="sort-bar"><span class="sort-lbl">ترتيب:</span>${[['score','التقييم'],['pa','سعر↑'],['pd','سعر↓'],['ram','RAM'],['pf','الأداء']].map(([v,l])=>`<button class="sort-btn ${sort===v?'on':''}" onclick="sort='${v}';render()">${l}</button>`).join('')}</div>`;
+  }else{
+    h+=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:18px"><span style="font-size:20px">⭐</span><span style="font-weight:700;font-size:16px;color:#f1f5f9">المفضلة</span></div>`;
+  }
+  if(!list.length){h+=`<div class="empty">${isFavV?'⭐ لا يوجد مزودون في المفضلة<br><small style="margin-top:8px;display:block">اضغط ⭐ على أي مزود لإضافته</small>':'🔍 لا توجد نتائج مطابقة'}</div>`}
+  else list.forEach((p,i)=>{
+    const s=sc(p),r=i+1,fv=isFav(p.id);
+    const rc=r===1?'#FFD700':r===2?'#C0C0C0':r===3?'#CD7F32':'';
+    h+=`<div class="card" onclick="openDet('${p.id}')" style="border-color:${fv?p.c:'#1e293b'}">
+      <div class="strip" style="background:${p.c}"></div>
+      ${!isFavV&&r<=3?`<div class="rank-badge" style="background:${rc}">#${r}</div>`:''}
+      <button class="fav-btn" style="top:10px;left:${!isFavV&&r<=3?44:12}px" onclick="togFav('${p.id}',event)">${fv?'⭐':'☆'}</button>
+      <div class="card-top">
+        <div class="card-emoji">${p.e}</div>
+        <div style="flex:1"><div class="card-name">${p.name}</div><div class="card-tagline">${p.tag}</div></div>
+        <div style="text-align:left;direction:ltr;flex-shrink:0"><div class="price-val" style="color:${p.c}">$${p.price}</div><div class="price-lbl">/شهر</div></div>
+      </div>
+      <div class="score-row"><span class="s-lbl">التقييم الكلي</span><div class="bar-bg"><div class="bar-fill" style="width:${s}%;background:${p.c}"></div></div><span class="s-val" style="color:${p.c}">${s}</span></div>
+      <div class="specs"><span class="spec">🤖 Android ${p.and}</span><span class="spec">💾 ${p.ram}GB RAM</span><span class="spec">💿 ${p.stor}GB</span></div>
+      <div class="badges">${bdg('🇪🇺 أوروبا',p.eu,p.c)}${bdg('🔒 IP ثابت',p.ip,p.c)}${bdg('⏰ 24/7',p.h24,p.c)}</div>
+    </div>`;
+  });
+  h+=`<div style="text-align:center;margin-top:18px;color:#334155;font-size:11px">بيانات للمقارنة فقط • تحقق من المواقع الرسمية للأسعار</div>`;
+  app.innerHTML=h;
+}
+function renderDetail(){
+  const p=sel;if(!p){goList();return}
+  const s=sc(p);
+  const scs=[{l:'الأداء',v:p.pf},{l:'الاستقرار',v:p.st},{l:'الدعم الفني',v:p.su},{l:'الخصوصية',v:p.pr}];
+  let h=`<button class="back-btn" onclick="goList()">← رجوع للقائمة</button>
+  <div class="det-header" style="background:linear-gradient(135deg,${p.c}33,${p.c}11);border:1px solid ${p.c}44">
+    <div class="det-top">
+      <div class="det-emoji">${p.e}</div>
+      <div style="flex:1"><div class="det-name">${p.name}</div><div class="det-tag">${p.tag}</div><div class="det-bf" style="color:${p.c}">🎯 الأنسب لـ: ${p.bf}</div></div>
+      <div class="score-big" style="text-align:center;margin-right:auto;flex-shrink:0"><div class="num" style="color:${p.c}">${s}</div><div class="den">/ 100</div></div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-box"><div class="sv" style="color:${p.c};direction:ltr">$${p.price}</div><div class="sl">شهرياً</div></div>
+      <div class="stat-box"><div class="sv" style="color:#f1f5f9">And.${p.and}</div><div class="sl">الإصدار</div></div>
+      <div class="stat-box"><div class="sv" style="color:#f1f5f9">${p.ram}GB</div><div class="sl">RAM</div></div>
+      <div class="stat-box"><div class="sv" style="color:#f1f5f9">${p.stor}G</div><div class="sl">تخزين</div></div>
+    </div>
+  </div>
+  <div class="sec"><div class="sec-title">📊 التقييمات التفصيلية</div>${scs.map(sc=>`<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:#94a3b8">${sc.l}</span><span style="font-size:12px;font-weight:700;color:${p.c}">${sc.v}/100</span></div><div class="bar-bg"><div class="bar-fill" style="width:${sc.v}%;background:${p.c}"></div></div></div>`).join('')}</div>
+  <div class="sec"><div class="sec-title">⚙️ الميزات</div><div class="feat-grid">${[['🌍 سيرفر أوروبي',p.eu],['🔒 IP ثابت',p.ip],['⏰ يعمل 24/7',p.h24],['🎯 Google Play',p.ps],['📦 تثبيت APK',p.apk]].map(([l,v])=>`<div class="feat-item"><span>${v?'✅':'❌'}</span><span style="color:${v?'#f1f5f9':'#64748b'}">${l}</span></div>`).join('')}</div></div>
+  <div class="sec"><div class="sec-title">🌍 مواقع السيرفرات</div><div class="srv-tags">${p.locs.map(l=>`<span class="srv-tag">${l}</span>`).join('')}</div></div>
+  <div class="pc-grid"><div class="pros-box"><div class="pt">✅ المزايا</div>${p.pros.map(x=>`<div class="pi">• ${x}</div>`).join('')}</div><div class="cons-box"><div class="ct">❌ العيوب</div>${p.cons.map(x=>`<div class="ci">• ${x}</div>`).join('')}</div></div>
+  <a class="visit-btn" href="${p.url}" target="_blank" rel="noreferrer" style="background:${p.c}">🌐 زيارة الموقع الرسمي</a>`;
+  document.getElementById('app').innerHTML=h;
+}
+function renderCompare(){
+  const L=cmpL,R=cmpR;
+  const rows=[
+    {l:'السعر',lv:`$${L.price}`,rv:`$${R.price}`,b:L.price<R.price?'L':R.price<L.price?'R':'T'},
+    {l:'Android',lv:L.and,rv:R.and,b:parseFloat(L.and)>parseFloat(R.and)?'L':parseFloat(R.and)>parseFloat(L.and)?'R':'T'},
+    {l:'RAM',lv:`${L.ram}GB`,rv:`${R.ram}GB`,b:L.ram>R.ram?'L':R.ram>L.ram?'R':'T'},
+    {l:'التخزين',lv:`${L.stor}GB`,rv:`${R.stor}GB`,b:L.stor>R.stor?'L':R.stor>L.stor?'R':'T'},
+    {l:'أوروبا',lv:L.eu?'✅':'❌',rv:R.eu?'✅':'❌',b:L.eu&&!R.eu?'L':R.eu&&!L.eu?'R':'T'},
+    {l:'IP ثابت',lv:L.ip?'✅':'❌',rv:R.ip?'✅':'❌',b:L.ip&&!R.ip?'L':R.ip&&!L.ip?'R':'T'},
+    {l:'الأداء',lv:L.pf,rv:R.pf,b:L.pf>R.pf?'L':R.pf>L.pf?'R':'T'},
+    {l:'الاستقرار',lv:L.st,rv:R.st,b:L.st>R.st?'L':R.st>L.st?'R':'T'},
+    {l:'الدعم',lv:L.su,rv:R.su,b:L.su>R.su?'L':R.su>L.su?'R':'T'},
+    {l:'الخصوصية',lv:L.pr,rv:R.pr,b:L.pr>R.pr?'L':R.pr>L.pr?'R':'T'},
+    {l:'التقييم الكلي',lv:sc(L),rv:sc(R),b:sc(L)>sc(R)?'L':sc(R)>sc(L)?'R':'T'},
+  ];
+  const lw=rows.filter(r=>r.b==='L').length,rw=rows.filter(r=>r.b==='R').length;
+  const win=lw>rw?L:rw>lw?R:null;
+  const opts=P.map(p=>`<option value="${p.id}">${p.e} ${p.name}</option>`).join('');
+  let h=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:18px"><span style="font-size:20px">⚖️</span><span style="font-weight:700;font-size:16px;color:#f1f5f9">مقارنة مباشرة</span></div>
+  <div class="cmp-sel">
+    <div><label class="cmp-lbl">المزود الأول</label><select class="cmp-select" style="border-color:${L.c};color:${L.c}" onchange="cmpL=P.find(p=>p.id===this.value);render()">${P.map(p=>`<option value="${p.id}" ${p.id===L.id?'selected':''}>${p.e} ${p.name}</option>`).join('')}</select></div>
+    <div><label class="cmp-lbl">المزود الثاني</label><select class="cmp-select" style="border-color:${R.c};color:${R.c}" onchange="cmpR=P.find(p=>p.id===this.value);render()">${P.map(p=>`<option value="${p.id}" ${p.id===R.id?'selected':''}>${p.e} ${p.name}</option>`).join('')}</select></div>
+  </div>
+  <div class="cmp-table">
+    <div class="cmp-head">
+      <div class="cmp-hl" style="color:${L.c};border-color:${L.c}">${L.e} ${L.name}</div>
+      <div class="cmp-hm">المعيار</div>
+      <div class="cmp-hr" style="color:${R.c};border-color:${R.c}">${R.e} ${R.name}</div>
+    </div>
+    ${rows.map((row,i)=>`<div class="cmp-row" style="background:${i%2?'#0a0f1e':'#0f172a'}">
+      <div class="cmp-cell ${row.b==='L'?'w':''}" style="color:${row.b==='L'?L.c:'#94a3b8'}">${row.b==='L'?'🏆 ':''}${row.lv}</div>
+      <div class="cmp-cell m">${row.l}</div>
+      <div class="cmp-cell ${row.b==='R'?'w':''}" style="color:${row.b==='R'?R.c:'#94a3b8'}">${row.rv}${row.b==='R'?' 🏆':''}</div>
+    </div>`).join('')}
+  </div>
+  <div class="verdict" style="background:${win?win.c+'22':'#1e293b'};border:1px solid ${win?win.c+'55':'#334155'}">
+    ${win?`<div class="v-emoji">${win.e}</div><div class="v-name" style="color:${win.c}">الفائز: ${win.name}</div><div class="v-sub">فاز في ${win===L?lw:rw} معيار من أصل ${rows.length}</div>`:'<div style="color:#94a3b8;font-size:14px">⚖️ تعادل تام بين المزودين!</div>'}
+  </div>`;
+  document.getElementById('app').innerHTML=h;
+}
+function goList(){view='list';window.scrollTo(0,0);render()}
+function goCompare(){view='compare';window.scrollTo(0,0);render()}
+function goFav(){view='fav';window.scrollTo(0,0);render();document.getElementById('nb-fav').classList.add('on')}
+function openDet(id){sel=P.find(p=>p.id===id);view='detail';window.scrollTo(0,0);render()}
+// PWA install
+let dp=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;document.getElementById('install-banner').classList.add('show');document.getElementById('app').style.paddingTop='60px'});
+document.getElementById('install-btn').addEventListener('click',async()=>{if(!dp)return;dp.prompt();await dp.userChoice;dp=null;document.getElementById('install-banner').classList.remove('show');document.getElementById('app').style.paddingTop='16px'});
+document.getElementById('dismiss-btn').addEventListener('click',()=>{document.getElementById('install-banner').classList.remove('show');document.getElementById('app').style.paddingTop='16px'});
+// Service Worker
+if('serviceWorker' in navigator){
+  const sw=`const C='ccv1';self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(['/'])));self.skipWaiting()});self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))));self.clients.claim()});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).catch(()=>caches.match('/'))))});`;
+  const b=new Blob([sw],{type:'application/javascript'});
+  navigator.serviceWorker.register(URL.createObjectURL(b)).catch(()=>{});
+}
+render();
+</script>
+</body>
+</html>
